@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hu">
 
 <head>
@@ -113,6 +113,25 @@
 
     nav ul a:hover {
       opacity: 0.6;
+    }
+
+    .menu-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 20px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .menu-btn span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: var(--red);
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* HERO */
@@ -641,13 +660,52 @@
     }
 
     /* MOBILE */
-    @media(max-width:700px) {
+    @media(max-width: 800px) {
       nav {
-        padding: 10px 16px;
+        padding: 10px 20px;
+      }
+
+      .menu-btn {
+        display: flex;
       }
 
       nav ul {
-        gap: 14px;
+        position: fixed;
+        top: 74px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 74px);
+        background: var(--cream);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 35px;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+        background: rgba(245, 240, 232, 0.98);
+      }
+
+      nav ul.active {
+        right: 0;
+      }
+
+      nav ul a {
+        font-size: 1.5rem;
+      }
+
+      /* Hamburger transform */
+      .menu-btn.active span:nth-child(1) {
+        transform: translateY(8.5px) rotate(45deg);
+      }
+
+      .menu-btn.active span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+
+      .menu-btn.active span:nth-child(3) {
+        transform: translateY(-8.5px) rotate(-45deg);
       }
 
       .menu-top {
@@ -733,6 +791,11 @@
       <li><a href="#reviews">Vélemények</a></li>
       <li><a href="#rate">Értékelj</a></li>
     </ul>
+    <div class="menu-btn" id="menuBtn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -1063,6 +1126,27 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.08 });
     document.querySelectorAll('.review-card').forEach(el => observer.observe(el));
+
+    // Mobile Menu Toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.querySelector('nav ul');
+    const links = document.querySelectorAll('nav ul a');
+
+    if (menuBtn && navLinks) {
+      menuBtn.addEventListener('click', () => {
+        menuBtn.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+      });
+
+      links.forEach(link => {
+        link.addEventListener('click', () => {
+          menuBtn.classList.remove('active');
+          navLinks.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    }
 
     // Star rating → redirect
     const stars = document.querySelectorAll('.star-rating .star');
